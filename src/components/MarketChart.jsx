@@ -11,7 +11,6 @@ import {
 import { fetchCompanyProfile, fetchQuote } from "../api/finnhub";
 import StockModal from "./StockModal";
 
-// Static mock chart data
 const mockData = [
   { time: "9:30", price: 189.3 },
   { time: "10:00", price: 190.2 },
@@ -105,12 +104,25 @@ export default function MarketChart({ symbol = "AAPL" }) {
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data} onClick={handleChartClick}>
-          <XAxis dataKey="time" />
-          <YAxis domain={["auto", "auto"]} />
+        <LineChart data={data} onClick={handleChartClick} margin={{ bottom: 40, left: 20 }}>
+          <XAxis
+            dataKey="time"
+            padding={{ top: 10, bottom: 10 }}
+            label={{ value: "Time", position: "insideBottom", offset: -10, fill: "#ccc" }}
+          />
+          <YAxis
+            dataKey="price"
+            align="center"
+            padding={{ left: 10 }}
+            domain={["auto", "auto"]}
+            label={{ value: "Price (USD)", angle: -90, position: "insideLeft", textAnchor: "middle", fill: "#ccc" }}
+          />
           <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="price" stroke="#82ca9d" dot={false} />
+          <Legend
+            verticalAlign="top"
+            align="right"
+          />
+          <Line type="monotone" dataKey="price" name={`${symbol} Price`} stroke="#82ca9d" dot={false} />
         </LineChart>
       </ResponsiveContainer>
 
