@@ -1,3 +1,5 @@
+# An expirmental personal project using dummy data and not active real time data - because I don't want to pay for the API calls
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
