@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const symbols = ['AAPL', 'TSLA', 'GOOGL', 'AMZN'];
-
-export default function Ticker() {
+export default function Ticker({ symbols }) {
   const [prices, setPrices] = useState([]);
 
   useEffect(() => {
@@ -23,9 +21,9 @@ export default function Ticker() {
     }
 
     fetchPrices();
-    const interval = setInterval(fetchPrices, 30000); // refresh every 30s
+    const interval = setInterval(fetchPrices, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [symbols]);
 
   return (
     <div className="whitespace-nowrap overflow-hidden">
