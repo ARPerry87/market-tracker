@@ -2,6 +2,9 @@ import React from 'react';
 import Ticker from './components/Ticker';
 import MarketChart from './components/MarketChart';
 import NewsMarquee from './components/NewsMarquee';
+import LiveQuote from './components/LiveQuote'; // 🔥 NEW IMPORT
+import LiveQuotes from './components/LiveQuotes';
+
 
 function App() {
   return (
@@ -21,6 +24,12 @@ function App() {
         <section className="bg-gray-800 rounded-xl p-4 shadow-md">
           <h2 className="text-xl mb-2 font-semibold text-blue-400">Market Chart</h2>
           <MarketChart />
+        </section>
+
+        {/* 🔥 New Live Quote Section */}
+        <section className="bg-gray-800 rounded-xl p-4 shadow-md">
+          <h2 className="text-xl mb-2 font-semibold text-green-400">Live Stock Data</h2>
+          <LiveQuotes />
         </section>
       </main>
 
