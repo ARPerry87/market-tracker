@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-export default function Ticker({ symbols }) {
+export default function Ticker({ symbols, onSelect }) {
   const [prices, setPrices] = useState([]);
 
   useEffect(() => {
@@ -27,9 +27,13 @@ export default function Ticker({ symbols }) {
 
   return (
     <div className="whitespace-nowrap overflow-hidden">
-      <div className="animate-marquee flex space-x-6 text-green-400">
+      <div className="animate-marquee flex space-x-6 text-green-400 cursor-pointer">
         {prices.map(stock => (
-          <span key={stock.symbol}>
+          <span
+            key={stock.symbol}
+            className="hover:text-yellow-300 transition"
+            onClick={() => onSelect(stock.symbol)}
+          >
             {stock.symbol}: ${stock.price.toFixed(2)}
           </span>
         ))}

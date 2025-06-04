@@ -5,9 +5,12 @@ import MarketChart from './components/MarketChart';
 import NewsMarquee from './components/NewsMarquee';
 import LiveQuotes from './components/LiveQuotes';
 import ManageSymbols from './components/ManageSymbols';
+import StockDetail from "./components/StockDetail";
+
 
 function App() {
   const [symbols, setSymbols] = useState(["AAPL", "TSLA", "GOOGL", "AMZN"]);
+  const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
 
   return (
     <BrowserRouter>
@@ -27,17 +30,17 @@ function App() {
                 <>
                   <section className="bg-gray-800 rounded-xl p-4 shadow-md">
                     <h2 className="text-xl mb-2 font-semibold text-yellow-400">Live Ticker</h2>
-                    <Ticker symbols={symbols} />
+                    <Ticker symbols={symbols} onSelect={setSelectedSymbol} />
                   </section>
 
                   <section className="bg-gray-800 rounded-xl p-4 shadow-md">
                     <h2 className="text-xl mb-2 font-semibold text-blue-400">Market Chart</h2>
-                    <MarketChart />
+                    <MarketChart symbol={selectedSymbol} />
                   </section>
 
                   <section className="bg-gray-800 rounded-xl p-4 shadow-md">
                     <h2 className="text-xl mb-2 font-semibold text-green-400">Live Stock Data</h2>
-                    <LiveQuotes />
+                    <LiveQuotes symbols={symbols} />
                   </section>
                 </>
               }
@@ -46,6 +49,10 @@ function App() {
             <Route
               path="/manage"
               element={<ManageSymbols symbols={symbols} setSymbols={setSymbols} />}
+            />
+            <Route 
+              path="/stock/:symbol" 
+              element={<StockDetail />} 
             />
           </Routes>
         </main>

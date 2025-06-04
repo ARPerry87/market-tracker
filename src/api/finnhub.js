@@ -27,3 +27,12 @@ export async function fetchIntradayData(symbol) {
     price: data.c[i],
   }));
 }
+
+export async function fetchCompanyProfile(symbol) {
+  const API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
+  const BASE_URL = "https://finnhub.io/api/v1";
+
+  const res = await fetch(`${BASE_URL}/stock/profile2?symbol=${symbol}&token=${API_KEY}`);
+  if (!res.ok) throw new Error("Failed to fetch company profile");
+  return await res.json();
+}

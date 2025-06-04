@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   LineChart,
   Line,
@@ -8,31 +8,66 @@ import {
   Legend,
   ResponsiveContainer
 } from "recharts";
+import { fetchCompanyProfile } from "../api/finnhub";
+import StockModal from "./StockModal";
 
-const data = [
-  { time: "9:30", AAPL: 189.3, TSLA: 724.1 },
-  { time: "10:00", AAPL: 190.2, TSLA: 728.5 },
-  { time: "10:30", AAPL: 188.7, TSLA: 720.3 },
-  { time: "11:00", AAPL: 191.1, TSLA: 735.9 },
-  { time: "11:30", AAPL: 192.4, TSLA: 740.2 },
-  { time: "12:00", AAPL: 190.8, TSLA: 732.0 },
-  { time: "12:30", AAPL: 189.5, TSLA: 726.7 },
-  { time: "1:00",  AAPL: 191.9, TSLA: 738.6 },
-  { time: "1:30",  AAPL: 192.1, TSLA: 742.4 },
-  { time: "2:00",  AAPL: 193.0, TSLA: 745.8 }
+const mockData = [
+  { time: "9:30", price: 189.3 },
+  { time: "10:00", price: 190.2 },
+  { time: "10:30", price: 188.7 },
+  { time: "11:00", price: 191.1 },
+  { time: "11:30", price: 192.4 },
+  { time: "12:00", price: 190.8 },
+  { time: "12:30", price: 189.5 },
+  { time: "1:00", price: 191.9 },
+  { time: "1:30", price: 192.1 },
+  { time: "2:00", price: 193.0 }
 ];
 
-export default function MarketChart() {
+export default function MarketChart({ symbol = "AAPL" }) {
+  const [data] = useState(mockData);
+  const [modalInfo, setModalInfo] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const openPrice = data[0]?.price ?? null;
+
+  async function handleChartClick(e) {
+    if (!e || !e.activePayload || !e.activePayload[0]) return;
+    const point = e.activePayload[0].payload;
+
+    try {
+      const company = await fetchCompanyProfile(symbol);
+      const priceChange = point.price - openPrice;
+      const percentChange = ((priceChange / openPrice) * 100).toFixed(2);
+
+      setModalInfo({
+        company,
+        time: point.time,
+        price: point.price,
+        openPrice,
+        priceChange,
+        percentChange
+      });
+
+      setModalOpen(true);
+    } catch (err) {
+      console.error("Failed to load company profile", err);
+    }
+  }
+
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={data}>
-        <XAxis dataKey="time" />
-        <YAxis domain={["auto", "auto"]} />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey="AAPL" stroke="#8884d8" dot={false} />
-        <Line type="monotone" dataKey="TSLA" stroke="#82ca9d" dot={false} />
-      </LineChart>
-    </ResponsiveContainer>
+    <>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={data} onClick={handleChartClick}>
+          <XAxis dataKey="time" />
+          <YAxis domain={["auto", "auto"]} />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="price" stroke="#82ca9d" dot={false} />
+        </LineChart>
+      </ResponsiveContainer>
+
+      <StockModal open={modalOpen} onClose={() => setModalOpen(false)} info={modalInfo} />
+    </>
   );
 }
