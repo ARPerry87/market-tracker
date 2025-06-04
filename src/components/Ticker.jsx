@@ -5,24 +5,34 @@ export default function Ticker({ symbols, onSelect }) {
   const [prices, setPrices] = useState([]);
 
   useEffect(() => {
-    async function fetchPrices() {
-      try {
-        const results = await Promise.all(symbols.map(symbol =>
+    let isMounted = true;
+
+    function fetchPrices() {
+      Promise.all(
+        symbols.map(symbol =>
           axios.get(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${import.meta.env.VITE_FINNHUB_API_KEY}`)
-        ));
-        const formatted = results.map((res, idx) => ({
-          symbol: symbols[idx],
-          price: res.data.c,
-        }));
-        setPrices(formatted);
-      } catch (err) {
-        console.error("Error fetching stock prices:", err);
-      }
+        )
+      )
+        .then(results => {
+          if (!isMounted) return;
+          const formatted = results.map((res, idx) => ({
+            symbol: symbols[idx],
+            price: res.data.c,
+          }));
+          setPrices(formatted);
+        })
+        .catch(err => {
+          if (!isMounted) return;
+          console.error("Error fetching stock prices:", err);
+        });
     }
 
     fetchPrices();
     const interval = setInterval(fetchPrices, 30000);
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [symbols]);
 
   return (
